@@ -1,6 +1,8 @@
 name: Test
 on:
-  workflow_dispatch
+  push:
+    branches: main
+    paths: trigger
 jobs:
   test:
     name: Test
@@ -8,13 +10,18 @@ jobs:
     permissions:
       contents: write
       id-token: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
-      - name: Test
-        run: |
+      - run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git checkout -b switch-docs-version
           echo "something" >> README.md
-          git config user.name "${GITHUB_ACTOR}"
-          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
           git add README.md
           git commit -m "Switch docs version back"
-          git push
+          git push -u origin switch-docs-version
+          PULL_REQUEST_URI=$(gh pr create --title "Switch docs version back" --body "" --head main -H switch-docs-version)
+          gh pr merge $PULL_REQUEST_URI --merge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
