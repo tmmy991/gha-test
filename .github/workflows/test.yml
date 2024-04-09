@@ -22,6 +22,6 @@ jobs:
           git commit -m "Switch docs version back"
           git push -u origin switch-docs-version
           PULL_REQUEST_URI=$(gh pr create --title "Switch docs version back" --body "" --head main -H switch-docs-version)
-          gh pr merge $PULL_REQUEST_URI --merge
+          gh pr merge $PULL_REQUEST_URI --merge --admin --auto
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
