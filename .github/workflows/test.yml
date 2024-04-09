@@ -14,14 +14,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
           git checkout -b switch-docs-version
           echo "something" >> README.md
           git add README.md
           git commit -m "Switch docs version back"
           git push -u origin switch-docs-version
-          PULL_REQUEST_URI=$(gh pr create --title "Switch docs version back" --body "" --head main -H switch-docs-version)
-          gh pr merge $PULL_REQUEST_URI --merge
+          gh pr create --title "Switch docs version back" --body "" --head main -H switch-docs-version
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
